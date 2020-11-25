@@ -1,16 +1,17 @@
 /* global document */
-const Cesium = require('cesium/Cesium');
-
-const
-  { defaultValue } = Cesium;
-const { defined } = Cesium;
-const { throttleRequestByServer } = Cesium;
-const { Event } = Cesium;
-const { Credit } = Cesium;
-const { WebMercatorTilingScheme } = Cesium;
-const { HeightmapTerrainData } = Cesium;
-const { TerrainProvider } = Cesium;
-const { when } = Cesium;
+import {
+  defaultValue,
+  defined,
+  throttleRequestByServer,
+  Event,
+  Credit,
+  WebMercatorTilingScheme,
+  HeightmapTerrainData,
+  TerrainProvider,
+  when,
+  Resource,
+  Request,
+} from 'cesium';
 
 const defaultCredit = new Credit('国土地理院');
 const GSI_MAX_TERRAIN_LEVEL = 15;
@@ -41,14 +42,14 @@ const getCredit = (credit) => {
   return result;
 };
 
-module.exports = class {
+export default class {
   /**
      *
      * @param {Object} options
      * @param {boolean} options.usePngData
      * @param {*} options.proxy
      * @param {number} options.heightPower
-     * @param {string|Cesium.Credit} options.credit
+     * @param {string|Credit} options.credit
      */
   constructor(options = {}) {
     this._usePngData = defaultValue(options.usePngData, false);
@@ -121,17 +122,17 @@ module.exports = class {
     throttleRequests = defaultValue(throttleRequests, true);
     if (throttleRequestByServer) { // Patch for > CESIUM1.35
       if (throttleRequests) {
-        promise = throttleRequestByServer(url, Cesium.Resource.fetch);
+        promise = throttleRequestByServer(url, Resource.fetch);
         if (!defined(promise)) {
           return undefined;
         }
       } else {
-        promise = Cesium.Resource.fetch(url);
+        promise = Resource.fetch(url);
       }
     } else {
-      promise = Cesium.Resource.fetch({
+      promise = Resource.fetch({
         url,
-        request: new Cesium.Request({ throttle: true }),
+        request: new Request({ throttle: true }),
       });
     }
 
@@ -235,4 +236,4 @@ module.exports = class {
   get ready() {
     return true;
   }
-};
+}
